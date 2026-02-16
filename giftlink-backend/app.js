@@ -9,7 +9,7 @@ const {loadData} = require("./util/import-mongo/index");
 
 
 const app = express();
-app.use("*",cors());
+app.use(cors());
 const port = 3060;
 
 // Connect to MongoDB; we just do this one time
@@ -52,6 +52,7 @@ app.get("/",(req,res)=>{
     res.send("Inside the server")
 })
 
-app.listen(port, () => {
+//app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on port ${port}`);
 });

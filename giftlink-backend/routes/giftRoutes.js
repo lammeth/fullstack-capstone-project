@@ -5,7 +5,7 @@ const logger = require('../logger');
 
 // Get all gifts
 router.get('/', async (req, res) => {
-    logger,info('/ called');
+    logger.info('/ called');
     try {
         // Task 1: Connect to MongoDB and store connection to db constant
         const db = await connectToDatabase();
@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
         // Task 4: return the gifts using the res.json method
         res.json(gifts);
     } catch (e) {
-        logger.console.error('Error fetching gifts:', e);
+        logger.error('Error fetching gifts:', e);
         next(e);
     }
 });
