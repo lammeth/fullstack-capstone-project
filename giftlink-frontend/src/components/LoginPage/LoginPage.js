@@ -1,15 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { urlConfig } from '../../config';
+import { useAppContext } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
 function LoginPage() {
-
-    //insert code here to create useState hook variables for email, password
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [incorrect, setIncorrect] = useState('');
 
-    // insert code here to create handleLogin function and include console.log
+    const navigate = useNavigate();
+    const bearerToken = sessionStorage.getItem('bearer-token');
+    const { setIsLoggedIn } = useAppContext();
+
+    useEffect(() => {
+        if (sessionStorage.getItem('auth-token')) {
+          navigate('/app');
+        }
+      }, [navigate]);
+  
     const handleLogin = async (e) => {
         e.preventDefault();
+
+        try {
+            const response = await fetch(`${urlConfig.backendUrl}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': bearerToken ? `Bearer ${bearerToken}` : '',
+                },
+                body: JSON.stringify({    
+                    email: email,
+                    password: password,
+                }),
+            });
+
+            const json = await response.json();
+
+            if (json.authtokenk) {
+                sessionStorage.setItem('bearer-token', json.authtoken);
+                sessionStorage.setItem('user-name', json.userName);
+                sessionStorage.setItem('user-email', json.userEmail);
+
+                setIsLoggedIn(true);
+                navigate('/app');
+            } else {
+                setIncorrect(json.error || 'Invalid email or password.');
+            }
+        } catch (e) {
+            console.log("Error fetching details: " + e.message);
+            document.getElementById("email").value="";
+            document.getElementById("password").value="";
+            setIncorrect('An error occurred. Please try again.');
+            setTimeout(() => {
+                setIncorrect("");
+              }, 2000);
+        }
     };
 
         return (
@@ -18,8 +64,6 @@ function LoginPage() {
                     <div className="col-md-6 col-lg-4">
                         <div className="login-card p-4 border rounded">
                             <h2 className="text-center mb-4 font-weight-bold">Login</h2>
-                            {/* insert code here to create input elements for the variables email and  password */}
-                            {/* email */}
                             <div className="mb-3">
                                 <label htmlFor="email" className="form-label">Email</label>
                                 <input
@@ -31,7 +75,6 @@ function LoginPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
-                            {/* email */}
                             <div className="mb-4">
                                 <label htmlFor="password" className="form-label">Password</label>
                                 <input
@@ -43,7 +86,7 @@ function LoginPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
-                            {/* insert code here to create a button that performs the `handleLogin` function on click */}
+                            <span style={{color:'red',height:'.5cm',display:'block',fontStyle:'italic',fontSize:'12px'}}>{incorrect}</span>
                             <button className="btn btn-primary w-100 mb-3" onClick={handleLogin}>Login</button>  
                             <p className="mt-4 text-center">
                                 New here? <a href="/app/register" className="text-primary">Register Here</a>
