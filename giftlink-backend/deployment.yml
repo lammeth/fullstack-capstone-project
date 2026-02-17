@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: giftapp-container
-        image: us.icr.io/sn-labs-bryonspeller/giftapp:v2
+        image: us.icr.io/sn-labs-bryonspeller/giftapp
 
         ports:
         - containerPort: 3060
