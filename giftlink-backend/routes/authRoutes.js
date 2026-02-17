@@ -1,15 +1,15 @@
 /*jshint esversion: 8 */
+console.log("THIS IS THE NEW VERSION");
+
 const express = require('express');
 const app = express();
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { body, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
 const connectToDatabase = require('../models/db');
 const router = express.Router();
 const dotenv = require('dotenv');
 const pino = require('pino'); 
-const { body, validationResult } = require('express-validator');
-
 const logger = pino();
 dotenv.config();
 
@@ -120,7 +120,6 @@ router.put('/update', async (req, res) => {
             logger.error('User not found');
             return res.status(404).json({ error: "User not found" });
         }
-
         existingUser.firstName = req.body.name;
         existingUser.updatedAt = new Date();
 
